@@ -123,3 +123,12 @@ def non_dismissed_offense(record1):
 @pytest.fixture
 def charged_dismissed_record(dismissed_offense):
     return OffenseRecordFactory(action="CHARGED", offense=dismissed_offense)
+
+
+@pytest.fixture
+def not_guilty_offense(record1):
+    return OffenseFactory(
+        ciprs_record=record1,
+        jurisdiction=constants.DISTRICT_COURT,
+        verdict="Not Guilty",
+    )

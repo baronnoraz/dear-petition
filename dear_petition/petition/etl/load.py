@@ -2,7 +2,7 @@ import logging
 
 from django.conf import settings
 
-from dear_petition.petition.constants import ATTACHMENT, DISMISSED
+from dear_petition.petition.constants import ATTACHMENT, DISMISSED, NOT_GUILTY
 from dear_petition.petition.models import Batch, CIPRSRecord
 from dear_petition.petition.etl.extract import parse_ciprs_document
 from dear_petition.petition.types import identify_distinct_petitions
@@ -48,6 +48,15 @@ def create_batch_petitions(batch):
         )
         link_offense_records_and_attachments(petition)
     # TODO: Not guilty
+    not_guilty_records = batch.not_guilty_offense_records()
+    petition_types = identify_distinct_petitions(not_guilty_records)
+    for petition_type in petition_types:
+        petition = batch.petitions.create(
+            form_type=NOT_GUILTY,
+            jurisdiction=petition_type["jurisdiction"],
+            county=petition_type["county"],
+        )
+        link_offense_records_and_attachments(petition)
     # TODO: Misdemeanor
 
 
